@@ -82,6 +82,18 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
     last_position_ = pdo_channels_info_[index].last_value;
   }
 
+  if (pdo_channels_info_[index].index == CiA402D_RPDO_POSITION && counter_ < 50) {
+    std::cout << "[TRACE] cnt=" << counter_
+              << " mode_disp=" << static_cast<int>(mode_of_operation_display_)
+              << " status=" << status_word_
+              << " pos_act=" << last_position_
+              << " cmd_eff=" << pdo_channels_info_[index].last_value
+              << " default=" << pdo_channels_info_[index].default_value
+              << " override=" << (pdo_channels_info_[index].override_command ? 1 : 0)
+              << std::endl;
+  }
+
+  
   // Special case: StatusWord
   if (pdo_channels_info_[index].index == CiA402D_TPDO_STATUSWORD) {
     status_word_ = pdo_channels_info_[index].last_value;
