@@ -96,12 +96,43 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   
   // Special case: StatusWord
   if (pdo_channels_info_[index].index == CiA402D_TPDO_STATUSWORD) {
-    status_word_ = pdo_channels_info_[index].last_value;
+    if (!is_operational_) {
+      status_word_ = 0;
+      pdo_channels_info_[index].last_value = 0;
+    } else {
+      status_word_ = pdo_channels_info_[index].last_value;
+    }
   }
 
 
   // CHECK FOR STATE CHANGE
   if (index == all_channels_.size() - 1) {  // if last entry  in domain
+    if (is_operational_ != last_operational_) {
+      if (is_operational_) {
+        std::cerr << "EcCiA402Drive: slave operational restored" << std::endl;
+      } else {
+        std::cerr << "EcCiA402Drive: slave operational lost" << std::endl;
+      }
+      last_operational_ = is_operational_;
+    }
+    // Mirror motion command interfaces into dedicated state interfaces for monitoring.
+    if (target_position_state_interface_index_ >= 0 && position_command_interface_index_ >= 0) {
+      state_interface_ptr_->at(target_position_state_interface_index_) =
+        command_interface_ptr_->at(position_command_interface_index_);
+    }
+    if (target_velocity_state_interface_index_ >= 0 && velocity_command_interface_index_ >= 0) {
+      state_interface_ptr_->at(target_velocity_state_interface_index_) =
+        command_interface_ptr_->at(velocity_command_interface_index_);
+    }
+    if (target_effort_state_interface_index_ >= 0 && effort_command_interface_index_ >= 0) {
+      state_interface_ptr_->at(target_effort_state_interface_index_) =
+        command_interface_ptr_->at(effort_command_interface_index_);
+    }
+    if (target_max_torque_state_interface_index_ >= 0 && max_torque_command_interface_index_ >= 0) {
+      state_interface_ptr_->at(target_max_torque_state_interface_index_) =
+        command_interface_ptr_->at(max_torque_command_interface_index_);
+    }
+
     if (status_word_ != last_status_word_) {
       state_ = deviceState(status_word_);
       if (state_ != last_state_) {
@@ -145,6 +176,31 @@ bool EcCiA402Drive::setupSlave(
 
   if (paramters_.find("command_interface/reset_fault") != paramters_.end()) {
     fault_reset_command_interface_index_ = std::stoi(paramters_["command_interface/reset_fault"]);
+  }
+  if (paramters_.find("command_interface/position") != paramters_.end()) {
+    position_command_interface_index_ = std::stoi(paramters_["command_interface/position"]);
+  }
+  if (paramters_.find("command_interface/velocity") != paramters_.end()) {
+    velocity_command_interface_index_ = std::stoi(paramters_["command_interface/velocity"]);
+  }
+  if (paramters_.find("command_interface/effort") != paramters_.end()) {
+    effort_command_interface_index_ = std::stoi(paramters_["command_interface/effort"]);
+  }
+  if (paramters_.find("command_interface/max_torque") != paramters_.end()) {
+    max_torque_command_interface_index_ = std::stoi(paramters_["command_interface/max_torque"]);
+  }
+
+  if (paramters_.find("state_interface/target_position") != paramters_.end()) {
+    target_position_state_interface_index_ = std::stoi(paramters_["state_interface/target_position"]);
+  }
+  if (paramters_.find("state_interface/target_velocity") != paramters_.end()) {
+    target_velocity_state_interface_index_ = std::stoi(paramters_["state_interface/target_velocity"]);
+  }
+  if (paramters_.find("state_interface/target_effort") != paramters_.end()) {
+    target_effort_state_interface_index_ = std::stoi(paramters_["state_interface/target_effort"]);
+  }
+  if (paramters_.find("state_interface/target_max_torque") != paramters_.end()) {
+    target_max_torque_state_interface_index_ = std::stoi(paramters_["state_interface/target_max_torque"]);
   }
 
   return true;

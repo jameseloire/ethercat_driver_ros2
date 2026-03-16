@@ -61,7 +61,16 @@ protected:
   bool auto_fault_reset_ = false;
   bool auto_state_transitions_ = true;
   bool fault_reset_ = false;
+  bool last_operational_ = true;
   int fault_reset_command_interface_index_ = -1;
+  int position_command_interface_index_ = -1;
+  int velocity_command_interface_index_ = -1;
+  int effort_command_interface_index_ = -1;
+  int max_torque_command_interface_index_ = -1;
+  int target_position_state_interface_index_ = -1;
+  int target_velocity_state_interface_index_ = -1;
+  int target_effort_state_interface_index_ = -1;
+  int target_max_torque_state_interface_index_ = -1;
   bool last_fault_reset_command_ = false;
   double last_position_ = std::numeric_limits<double>::quiet_NaN();
 
