@@ -98,6 +98,9 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
     if (!is_operational_) {
       status_word_ = 0;
       pdo_channels_info_[index].last_value = 0;
+      if (pdo_channels_info_[index].interface_index >= 0) {
+        state_interface_ptr_->at(pdo_channels_info_[index].interface_index) = 0;
+      }
     } else {
       status_word_ = pdo_channels_info_[index].last_value;
     }
