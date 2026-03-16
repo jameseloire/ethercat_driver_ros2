@@ -104,6 +104,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
     }
   }
 
+<<<<<<< Updated upstream
 
   // CHECK FOR STATE CHANGE
   if (index == all_channels_.size() - 1) {  // if last entry  in domain
@@ -112,6 +113,46 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
         std::cerr << "EcCiA402Drive: slave operational restored" << std::endl;
       } else {
         std::cerr << "EcCiA402Drive: slave operational lost" << std::endl;
+=======
+   
+    if (index == all_channels_.size() - 1)
+      { // if last entry  in domain
+
+        // Mirror motion command interfaces into dedicated state interfaces for monitoring.
+      if (target_position_state_interface_index_ >= 0 && position_command_interface_index_ >= 0) {
+        state_interface_ptr_->at(target_position_state_interface_index_) =
+          command_interface_ptr_->at(position_command_interface_index_);
+      }
+      if (target_velocity_state_interface_index_ >= 0 && velocity_command_interface_index_ >= 0) {
+        state_interface_ptr_->at(target_velocity_state_interface_index_) =
+          command_interface_ptr_->at(velocity_command_interface_index_);
+      }
+      if (target_effort_state_interface_index_ >= 0 && effort_command_interface_index_ >= 0) {
+        state_interface_ptr_->at(target_effort_state_interface_index_) =
+          command_interface_ptr_->at(effort_command_interface_index_);
+      }
+      if (target_max_torque_state_interface_index_ >= 0 && max_torque_command_interface_index_ >= 0) {
+        state_interface_ptr_->at(target_max_torque_state_interface_index_) =
+          command_interface_ptr_->at(max_torque_command_interface_index_);
+      }
+
+
+       // CHECK FOR STATE CHANGE
+      if (status_word_ != last_status_word_)
+      {
+        state_ = deviceState(status_word_);
+        if (state_ != last_state_)
+        {
+          std::cout << "STATE -- : " << DEVICE_STATE_STR.at(state_)
+                    << " with status word -- :" << status_word_
+                    << "[TRACE] cnt=" << counter_
+                    << " pos_act=" << last_position_
+                    << " cmd_eff=" << pdo_channels_info_[index].last_value
+                    << " default=" << pdo_channels_info_[index].default_value
+                    << " override=" << (pdo_channels_info_[index].override_command ? 1 : 0)
+                    << std::endl;
+        }
+>>>>>>> Stashed changes
       }
       last_operational_ = is_operational_;
     }
@@ -190,6 +231,7 @@ bool EcCiA402Drive::setupSlave(
     max_torque_command_interface_index_ = std::stoi(paramters_["command_interface/max_torque"]);
   }
 
+<<<<<<< Updated upstream
   if (paramters_.find("state_interface/target_position") != paramters_.end()) {
     target_position_state_interface_index_ = std::stoi(paramters_["state_interface/target_position"]);
   }
@@ -201,6 +243,36 @@ bool EcCiA402Drive::setupSlave(
   }
   if (paramters_.find("state_interface/target_max_torque") != paramters_.end()) {
     target_max_torque_state_interface_index_ = std::stoi(paramters_["state_interface/target_max_torque"]);
+=======
+
+    if (paramters_.find("command_interface/position") != paramters_.end()) {
+      position_command_interface_index_ = std::stoi(paramters_["command_interface/position"]);
+    }
+    if (paramters_.find("command_interface/velocity") != paramters_.end()) {
+      velocity_command_interface_index_ = std::stoi(paramters_["command_interface/velocity"]);
+    }
+    if (paramters_.find("command_interface/effort") != paramters_.end()) {
+      effort_command_interface_index_ = std::stoi(paramters_["command_interface/effort"]);
+    }
+    if (paramters_.find("command_interface/max_torque") != paramters_.end()) {
+      max_torque_command_interface_index_ = std::stoi(paramters_["command_interface/max_torque"]);
+    }
+
+    if (paramters_.find("state_interface/target_position") != paramters_.end()) {
+      target_position_state_interface_index_ = std::stoi(paramters_["state_interface/target_position"]);
+    }
+    if (paramters_.find("state_interface/target_velocity") != paramters_.end()) {
+      target_velocity_state_interface_index_ = std::stoi(paramters_["state_interface/target_velocity"]);
+    }
+    if (paramters_.find("state_interface/target_effort") != paramters_.end()) {
+      target_effort_state_interface_index_ = std::stoi(paramters_["state_interface/target_effort"]);
+    }
+    if (paramters_.find("state_interface/target_max_torque") != paramters_.end()) {
+      target_max_torque_state_interface_index_ = std::stoi(paramters_["state_interface/target_max_torque"]);
+    }
+
+    return true;
+>>>>>>> Stashed changes
   }
 
   return true;
