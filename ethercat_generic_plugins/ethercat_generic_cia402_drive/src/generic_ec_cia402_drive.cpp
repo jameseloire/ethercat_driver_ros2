@@ -104,7 +104,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
     }
   }
 
-  if (index == all_channels_.size() - 1) { // if last entry in domain
+   
     // Mirror motion command interfaces into dedicated state interfaces for monitoring.
     if (target_position_state_interface_index_ >= 0 && position_command_interface_index_ >= 0) {
       state_interface_ptr_->at(target_position_state_interface_index_) =
@@ -124,9 +124,11 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
     }
 
     // CHECK FOR STATE CHANGE
-    if (status_word_ != last_status_word_) {
+    if (status_word_ != last_status_word_)
+    {
       state_ = deviceState(status_word_);
-      if (state_ != last_state_) {
+      if (state_ != last_state_)
+      {
         std::cout << "STATE -- : " << DEVICE_STATE_STR.at(state_)
                   << " with status word -- :" << status_word_
                   << "[TRACE] cnt=" << counter_
@@ -137,6 +139,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
                   << std::endl;
       }
     }
+      last_operational_ = is_operational_;
 
     initialized_ = ((state_ == STATE_OPERATION_ENABLED) &&
       (last_state_ == STATE_OPERATION_ENABLED)) ? true : false;
@@ -145,7 +148,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
     last_state_ = state_;
     counter_++;
   }
-  }
+}
 
 bool EcCiA402Drive::setupSlave(
   std::unordered_map<std::string, std::string> slave_paramters,
