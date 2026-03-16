@@ -52,6 +52,7 @@ public:
 
   protected:
     uint32_t counter_ = 0;
+
     uint16_t last_status_word_ = -1;
     uint16_t status_word_ = 0;
     uint16_t control_word_ = 0;
