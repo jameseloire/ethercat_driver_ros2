@@ -50,31 +50,6 @@ public:
   int8_t mode_of_operation_display_ = 0;
   int8_t mode_of_operation_ = -1;
 
-<<<<<<< Updated upstream
-protected:
-  uint32_t counter_ = 0;
-  uint16_t last_status_word_ = -1;
-  uint16_t status_word_ = 0;
-  uint16_t control_word_ = 0;
-  DeviceState last_state_ = STATE_START;
-  DeviceState state_ = STATE_START;
-  bool initialized_ = false;
-  bool auto_fault_reset_ = false;
-  bool auto_state_transitions_ = true;
-  bool fault_reset_ = false;
-  bool last_operational_ = true;
-  int fault_reset_command_interface_index_ = -1;
-  int position_command_interface_index_ = -1;
-  int velocity_command_interface_index_ = -1;
-  int effort_command_interface_index_ = -1;
-  int max_torque_command_interface_index_ = -1;
-  int target_position_state_interface_index_ = -1;
-  int target_velocity_state_interface_index_ = -1;
-  int target_effort_state_interface_index_ = -1;
-  int target_max_torque_state_interface_index_ = -1;
-  bool last_fault_reset_command_ = false;
-  double last_position_ = std::numeric_limits<double>::quiet_NaN();
-=======
   protected:
     uint32_t counter_ = 0;
     uint16_t last_status_word_ = -1;
@@ -102,7 +77,6 @@ protected:
     double last_position_ = std::numeric_limits<double>::quiet_NaN();
     bool target_latched = false;
     float seuil = 0.1;// seuil en radian entre la pos actuel est la consigne
->>>>>>> Stashed changes
 
   /** returns device state based upon the status_word */
   DeviceState deviceState(uint16_t status_word);
